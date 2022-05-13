@@ -34,7 +34,7 @@
             <img class="mx-auto d-block" src="https://place-hold.it/80x80" width="80" height="80" alt="">
             <div class="card-body">
               <p class="card-text mb-2">{{ specialty.title }}</p>
-              <p class="card-text"><a href="{% url 'vacancies_cat'  specialty.code  %}">{{ specialty.vacansies_count }} вакансий</a></p>
+              <p class="card-text"><a href="{{ specialty.get_absolute_url  }}">{{ specialty.vacansies_count }} вакансий</a></p>
             </div>
           </div>
         </div>
@@ -53,7 +53,7 @@
             </a>
             <div class="card-body">
               <p class="card-text mb-2">{{ company.name }}</p>
-              <p class="card-text"><a href="{% url 'company_detail' company.id  %}">{{ company.vacansies_count }} вакансий</a></p>
+              <p class="card-text"><a href="{{ company.get_absolute_url  }}">{{ company.vacansies_count }} вакансий</a></p>
             </div>
           </div>
         </div>

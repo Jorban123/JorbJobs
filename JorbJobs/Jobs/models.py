@@ -1,6 +1,7 @@
 from django.db import models
 from django.db.models import CharField, ForeignKey, TextField,\
     IntegerField, DateField, URLField
+from django.urls import reverse
 
 
 class Company(models.Model):
@@ -13,6 +14,8 @@ class Company(models.Model):
     def __str__(self):
         return f'{self.name}'
 
+    def get_absolute_url(self):
+        return reverse('company_detail', kwargs={'pk': self.pk})
 
 class Specialty(models.Model):
     code = CharField(max_length=64)
@@ -22,6 +25,8 @@ class Specialty(models.Model):
     def __str__(self):
         return f'{self.title}'
 
+    def get_absolute_url(self):
+        return reverse('vacancies_cat', kwargs={'cat_name': self.code})
 
 class Vacansy(models.Model):
     title = CharField(max_length=64)
@@ -32,3 +37,6 @@ class Vacansy(models.Model):
     salary_min = IntegerField()
     salary_max = IntegerField()
     published_at = DateField(auto_now=False, auto_now_add=True)
+
+    def get_absolute_url(self):
+        return reverse('vacancies_detail', kwargs={'id_vacancy': self.pk})

@@ -35,24 +35,22 @@ class VacansiesView(ListView):
 
 
 class CompanyDetail(ListView):
+    model = Vacansy
     template_name = 'company.html'
     context_object_name = 'vacancies'
 
     def get_queryset(self):
         return Vacansy.objects \
-            .select_related('company') \
-            .select_related('specialty')\
-            .filter(company__id=self.kwargs['pk'])
+            .select_related('company')\
+            .filter(company__id=self.kwargs['pk'])\
+            .select_related('specialty')
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super(CompanyDetail, self).get_context_data()
-        comp = Company.objects.get(id=self.kwargs['pk'])
-        context['company_title'] = comp.name
-        context['city'] = comp.location
-        context['amount_vacansy'] = Vacansy.objects \
-            .select_related('company') \
-            .filter(company__id=self.kwargs['pk']) \
-            .aggregate(amount=Count('id'))['amount']
+        company = Company.objects.get(pk=self.kwargs['pk'])
+        context['company_title'] = company.name
+        context['location'] = company.location
+        context['amount'] = Vacansy.objects.select_related('company').filter(company__pk=self.kwargs['pk']).aggregate(amount=Count('id'))['amount']
         return context
 
 
@@ -62,6 +60,8 @@ class VacancyDetail(DetailView):
     context_object_name = 'vacansy'
     pk_url_kwarg = 'id_vacancy'
 
+    def get_queryset(self):
+        return Vacansy.objects.select_related('specialty').select_related('company')
 
 class SpecialtyView(ListView):
     template_name = 'vacancies.html'
@@ -75,10 +75,7 @@ class SpecialtyView(ListView):
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super(SpecialtyView, self).get_context_data()
-        title = Specialty.objects.filter(code=self.kwargs['cat_name'])[0]
-        context['amount'] = Vacansy.objects \
-            .select_related('company') \
-            .filter(specialty__code=self.kwargs['cat_name']) \
-            .aggregate(amount=Count('id'))['amount']
+        title = Specialty.objects.get(code=self.kwargs['cat_name'])
         context['title'] = title.title
+        context['amount'] = Vacansy.objects.select_related('specialty').filter(specialty__code=self.kwargs['cat_name']).aggregate(amount=Count('id'))['amount']
         return context
