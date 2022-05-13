@@ -76,5 +76,9 @@ class SpecialtyView(ListView):
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super(SpecialtyView, self).get_context_data()
         title = Specialty.objects.filter(code=self.kwargs['cat_name'])[0]
+        context['amount'] = Vacansy.objects \
+            .select_related('company') \
+            .filter(specialty__code=self.kwargs['cat_name']) \
+            .aggregate(amount=Count('id'))['amount']
         context['title'] = title.title
         return context
