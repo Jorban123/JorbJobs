@@ -1,5 +1,8 @@
 from django.db.models import Count
+from django.http import HttpResponseNotFound
+from django.http import HttpResponseServerError
 from django.views.generic import ListView, DetailView
+
 from .models import Vacansy, Specialty, Company
 
 
@@ -50,7 +53,7 @@ class CompanyDetail(ListView):
         company = Company.objects.get(pk=self.kwargs['pk'])
         context['company_title'] = company.name
         context['location'] = company.location
-        context['amount'] = Vacansy.objects.select_related('company').filter(company__pk=self.kwargs['pk']).aggregate(amount=Count('id'))['amount']
+        context['amount'] = Vacansy.objects.filter(company__pk=self.kwargs['pk']).aggregate(amount=Count('id'))['amount']
         return context
 
 
@@ -79,3 +82,11 @@ class SpecialtyView(ListView):
         context['title'] = title.title
         context['amount'] = Vacansy.objects.select_related('specialty').filter(specialty__code=self.kwargs['cat_name']).aggregate(amount=Count('id'))['amount']
         return context
+
+
+def custom_handler404(request, exception):
+    return HttpResponseNotFound('Ой, что то сломалось... Простите извините!')
+
+
+def custom_handler500(request):
+    return HttpResponseServerError()
