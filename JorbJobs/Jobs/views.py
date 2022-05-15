@@ -45,12 +45,12 @@ class CompanyDetail(ListView):
     def get_queryset(self):
         return Vacansy.objects \
             .select_related('company')\
-            .filter(company__id=self.kwargs['pk'])\
+            .filter(company=self.kwargs['pk'])\
             .select_related('specialty')
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super(CompanyDetail, self).get_context_data()
-        company = Company.objects.get(pk=self.kwargs['pk'])
+        company = Company.objects.get(id=self.kwargs['pk'])
         context['company_title'] = company.name
         context['location'] = company.location
         context['amount'] = Vacansy.objects.filter(company__pk=self.kwargs['pk']).aggregate(amount=Count('id'))['amount']
@@ -64,7 +64,9 @@ class VacancyDetail(DetailView):
     pk_url_kwarg = 'id_vacancy'
 
     def get_queryset(self):
-        return Vacansy.objects.select_related('specialty').select_related('company')
+        return Vacansy.objects.select_related('specialty')\
+                              .select_related('company')
+
 
 class SpecialtyView(ListView):
     template_name = 'vacancies.html'
@@ -80,7 +82,9 @@ class SpecialtyView(ListView):
         context = super(SpecialtyView, self).get_context_data()
         title = Specialty.objects.get(code=self.kwargs['cat_name'])
         context['title'] = title.title
-        context['amount'] = Vacansy.objects.select_related('specialty').filter(specialty__code=self.kwargs['cat_name']).aggregate(amount=Count('id'))['amount']
+        context['amount'] = Vacansy.objects.select_related('specialty')\
+                                           .filter(specialty__code=self.kwargs['cat_name'])\
+                                           .aggregate(amount=Count('id'))['amount']
         return context
 
 

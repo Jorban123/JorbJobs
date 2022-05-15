@@ -2,7 +2,7 @@ from Jobs.views import IndexView, VacansiesView, CompanyDetail, VacancyDetail, S
 from django.contrib import admin
 from django.urls import path, include
 
-from JorbJobs.Jobs.views import custom_handler404, custom_handler500
+from Jobs.views import custom_handler404, custom_handler500
 
 urlpatterns = [
     path('admin/', admin.site.urls),
