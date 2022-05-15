@@ -1,35 +1,33 @@
 from django.contrib import admin
-from .models import Company, Specialty, Vacansy
+from .models import Company, Specialty, Vacansy, User, Application, Resume
 
 
 class VacansyAdmin(admin.ModelAdmin):
-    list_display = ('id',
-                    'title',
-                    'specialty',
-                    'company',
-                    'skills',
-                    'description',
-                    'salary_min',
-                    'salary_max',
-                    'published_at')
+    pass
+
+
+class ApplicationAmin(admin.ModelAdmin):
+    pass
 
 
 class CompanyAdmin(admin.ModelAdmin):
-    list_display = ('id',
-                    'name',
-                    'location',
-                    'logo',
-                    'description',
-                    'employee_count')
+    pass
 
 
 class SpecialtyAdmin(admin.ModelAdmin):
-    list_display = ('id',
-                    'code',
-                    'title',
-                    'picture')
+    pass
 
+
+class UserAdmin(admin.ModelAdmin):
+    readonly_fields = ('id',)
+    list_display = ('id', 'name', 'password', 'email', )
+
+class ResumeAdmin(admin.ModelAdmin):
+    pass
 
 admin.site.register(Company, CompanyAdmin)
 admin.site.register(Specialty, SpecialtyAdmin)
 admin.site.register(Vacansy, VacansyAdmin)
+admin.site.register(User, UserAdmin)
+admin.site.register(Application, ApplicationAmin)
+admin.site.register(Resume, ResumeAdmin)

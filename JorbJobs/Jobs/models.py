@@ -1,12 +1,16 @@
 from django.db import models
-
 from django.urls import reverse
+from PIL import Image
+from sorl.thumbnail import ImageField, get_thumbnail
 
 
 class User(models.Model):
     name = models.CharField(max_length=64)
     password = models.CharField(max_length=16)
     email = models.EmailField()
+
+    def __str__(self):
+        return f'{self.name}'
 
 
 class Company(models.Model):
@@ -15,7 +19,13 @@ class Company(models.Model):
     logo = models.ImageField(upload_to='MEDIA_COMPANY_IMAGE_DIR', default='https://place-hold.it/100x60')
     description = models.TextField()
     employee_count = models.IntegerField()
-    owner = models.OneToOneField(User, on_delete=models.CASCADE)
+    owner = models.OneToOneField('User', on_delete=models.CASCADE)
+
+    def save(self):
+        super().save()
+        img = Image.open(self.logo.path)
+        img = img.resize((500, 500))
+        img.save(self.logo.path)
 
     def __str__(self):
         return f'{self.name}'
@@ -50,12 +60,6 @@ class Vacansy(models.Model):
         return reverse('vacancies_detail', kwargs={'id_vacancy': self.pk})
 
 
-class User(models.Model):
-    name = models.CharField(max_length=64)
-    password = models.CharField(max_length=16)
-    email = models.EmailField()
-
-
 class Application(models.Model):
     written_username = models.CharField(max_length=64)
     written_phone = models.CharField(max_length=12)
@@ -63,3 +67,52 @@ class Application(models.Model):
     vacancy = models.ForeignKey(Vacansy, on_delete=models.CASCADE, related_name='applications')
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='applications')
 
+
+class Resume(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    name = models.CharField(max_length=64)
+    surname = models.CharField(max_length=64)
+
+    class WorkStatusChoices(models.TextChoices):
+        not_in_search = 'Не ищу работу'
+        consideration = 'Рассматриваю предложения'
+        in_search = 'Ищу работу'
+
+    status = models.CharField(max_length=100,
+                              choices=WorkStatusChoices.choices,
+                              default=WorkStatusChoices.in_search)
+    salary = models.CharField(max_length=15)
+
+    class SpecialtyChoices(models.TextChoices):
+        frontend = 'Фронтенд'
+        backend = 'Бэкенд'
+        gamedev = 'Геймдев'
+        devops = 'Девопс'
+        design = 'Дизайн'
+        products = 'Продукты'
+        management = 'Менеджмент'
+        testing = 'Тестирование'
+    specialty = models.CharField(max_length=64,
+                                 choices=SpecialtyChoices.choices,
+                                 default=SpecialtyChoices.frontend)
+
+    class GradeChoices(models.TextChoices):
+        intern = 'intern'
+        junior = 'junior'
+        middle = 'middle'
+        senior = 'senior'
+        lead = 'lead'
+
+    grade = models.CharField(max_length=100,
+                             choices=GradeChoices.choices)
+
+    class EducationChoices(models.TextChoices):
+        missing = 'Отсутствует'
+        secondary = 'Среднее'
+        vocational = 'Средне-специальное'
+        incomplete_higher = 'Неполное высшее'
+        higher = 'Высшее'
+
+    education = models.CharField(max_length=100, choices=EducationChoices.choices)
+    experience = models.CharField(max_length=100)
+    portfolio = models.URLField()

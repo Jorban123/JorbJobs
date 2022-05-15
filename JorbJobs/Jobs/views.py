@@ -53,6 +53,7 @@ class CompanyDetail(ListView):
         company = Company.objects.get(id=self.kwargs['pk'])
         context['company_title'] = company.name
         context['location'] = company.location
+        context['logo'] = company.logo.url
         context['amount'] = Vacansy.objects.filter(company__pk=self.kwargs['pk']).aggregate(amount=Count('id'))['amount']
         return context
 
