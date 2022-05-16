@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container-fluid d-flex h-100 justify-content-center align-items-center p-0 ">
+<form action="{% url 'register' %}" method="post">
+  {% csrf_token %}
+  <h1>Джуманджи</h1>
+  {{ form }}
+      <p>Есть аккаунт?<a href="{% url 'login' %}"> Войдите!</a></p>
+  <button type="submit" class="btn btn-primary btn-block mb-4">Регистрация</button>
+</form>
+</div>
+{% endblock %}

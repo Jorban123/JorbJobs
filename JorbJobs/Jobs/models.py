@@ -1,16 +1,11 @@
+from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.urls import reverse
 from PIL import Image
-from sorl.thumbnail import ImageField, get_thumbnail
 
 
-class User(models.Model):
-    name = models.CharField(max_length=64)
-    password = models.CharField(max_length=16)
-    email = models.EmailField()
-
-    def __str__(self):
-        return f'{self.name}'
+class User(AbstractUser):
+    pass
 
 
 class Company(models.Model):

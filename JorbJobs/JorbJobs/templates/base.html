@@ -5,7 +5,10 @@
   <meta charset="UTF-8">
   <title>Джуманджи</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  {% block backgcolor %}
+  {% endblock %}
 </head>
 
 <body>
@@ -23,7 +26,25 @@
         </ul>
         <ul class="navbar-nav col-2 justify-content-end">
           <li class="nav-item active">
-            <a href="#" class="nav-link font-weight-bold">Вход</a>
+            {% if user.is_authenticated %}
+            <ul class="navbar-nav col-2 justify-content-end">
+                <li class="nav-item active">
+                  <div class="btn-group">
+                    <button type="button" class="btn dropdown-toggle font-weight-bold" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      {{ request.user }}
+                    </button>
+                    <div class="dropdown-menu mt-3">
+                      <a href="#" class="dropdown-item py-2">Профиль</a>
+                      <a href="#" class="dropdown-item py-2">Резюме</a>
+                      <a href="{% url 'company_start' %}" class="dropdown-item py-2">Компания</a>
+                      <a href="{% url 'logout' %}" class="dropdown-item py-2">Выйти</a>
+                    </div>
+                  </div>
+                </li>
+             </ul>
+            {% else %}
+            <a href="{% url 'login' %}" class="nav-link font-weight-bold">Вход</a>
+            {% endif %}
           </li>
         </ul>
       </div>

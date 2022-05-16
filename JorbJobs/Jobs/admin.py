@@ -19,8 +19,7 @@ class SpecialtyAdmin(admin.ModelAdmin):
 
 
 class UserAdmin(admin.ModelAdmin):
-    readonly_fields = ('id',)
-    list_display = ('id', 'name', 'password', 'email', )
+    pass
 
 class ResumeAdmin(admin.ModelAdmin):
     pass
