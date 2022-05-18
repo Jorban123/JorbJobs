@@ -8,6 +8,7 @@ from Jobs.forms import RegisterUserForm
 
 
 class LoginUserView(LoginView):
+    """Авторизация пользователя на сайте"""
     form_class = AuthenticationForm
     redirect_authenticated_user = True
     success_url = '/'
@@ -15,6 +16,7 @@ class LoginUserView(LoginView):
 
 
 class RegisterUserView(CreateView):
+    """Регистрация пользователя на сайте"""
     form_class = RegisterUserForm
     success_url = '/'
     template_name = 'registration/register.html'

@@ -4,6 +4,9 @@ from django.urls import reverse
 from PIL import Image
 
 
+from JorbJobs.settings import MEDIA_COMPANY_IMAGE_DIR, MEDIA_SPECIALITY_IMAGE_DIR
+
+
 class User(AbstractUser):
     pass
 
@@ -11,16 +14,20 @@ class User(AbstractUser):
 class Company(models.Model):
     name = models.CharField(max_length=64)
     location = models.CharField(max_length=64)
-    logo = models.ImageField(upload_to='MEDIA_COMPANY_IMAGE_DIR', default='https://place-hold.it/100x60')
+    logo = models.ImageField(upload_to=MEDIA_COMPANY_IMAGE_DIR, default='https://place-hold.it/100x60')
     description = models.TextField()
-    employee_count = models.IntegerField()
+    employee_count = models.PositiveIntegerField()
     owner = models.OneToOneField('User', on_delete=models.CASCADE)
 
-    def save(self):
-        super().save()
+    def save(self, *args, **kwargs):
+        super(Company, self).save(*args, **kwargs)
         img = Image.open(self.logo.path)
         img = img.resize((500, 500))
+        employee = self.employee_count
+        if int(employee) < 1:
+            raise ValueError('Количество сотрудников не может быть меньше одного')
         img.save(self.logo.path)
+
 
     def __str__(self):
         return f'{self.name}'
@@ -29,10 +36,12 @@ class Company(models.Model):
         return reverse('company_detail', kwargs={'pk': self.pk})
 
 
+
+
 class Specialty(models.Model):
     code = models.CharField(max_length=64)
     title = models.CharField(max_length=64)
-    picture = models.ImageField(upload_to='MEDIA_SPECIALITY_IMAGE_DIR', default='https://place-hold.it/100x60')
+    picture = models.ImageField(upload_to=MEDIA_SPECIALITY_IMAGE_DIR, default='https://place-hold.it/100x60')
 
     def __str__(self):
         return f'{self.title}'

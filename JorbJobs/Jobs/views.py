@@ -7,6 +7,7 @@ from .models import Vacansy, Specialty, Company
 
 
 class IndexView(ListView):
+    """Генерирует начальную страницу сайта"""
     model = Specialty
     template_name = 'index.html'
     context_object_name = 'specialties'
@@ -21,6 +22,7 @@ class IndexView(ListView):
 
 
 class VacansiesView(ListView):
+    """Генерирует все вакансии"""
     model = Vacansy
     template_name = 'vacancies.html'
     context_object_name = 'vacansies'
@@ -38,6 +40,7 @@ class VacansiesView(ListView):
 
 
 class CompanyDetail(ListView):
+    """Генерирует все вакансии конкретной компании"""
     model = Vacansy
     template_name = 'company.html'
     context_object_name = 'vacancies'
@@ -59,6 +62,7 @@ class CompanyDetail(ListView):
 
 
 class VacancyDetail(DetailView):
+    """Генерирует детальную информацию по конкретной вакансии"""
     model = Vacansy
     template_name = 'vacancy.html'
     context_object_name = 'vacansy'
@@ -70,6 +74,7 @@ class VacancyDetail(DetailView):
 
 
 class SpecialtyView(ListView):
+    """Генерирует вакансии по конкретной специальности"""
     template_name = 'vacancies.html'
     context_object_name = 'vacansies'
 
