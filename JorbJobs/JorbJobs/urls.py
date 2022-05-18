@@ -8,12 +8,18 @@ from Jobs.views import custom_handler404, custom_handler500
 
 from Jobs.accounts.views import LoginUserView, RegisterUserView
 
-from Jobs.companies.views import CompanyLetsStart, CompanyCreate, my_company
+from Jobs.companies.views import CompanyLetsStart, CompanyCreate, CompanyVacancies, my_company, CompanyVacancyCreate,\
+    company_vacancy_update, company_vacancy_delete, company_delete
 
 company_handling = [
     path('', my_company, name='my_company'),
     path('create/', CompanyCreate.as_view(), name='company_create'),
     path('letsstart/', CompanyLetsStart.as_view(), name='company_start'),
+    path('vacancies/', CompanyVacancies.as_view(), name='company_vacancies'),
+    path('vacancies/create/', CompanyVacancyCreate.as_view(), name='company_vacancy_create'),
+    path('vacancies/<int:pk>/update', company_vacancy_update, name='company_vacancy_update'),
+    path('vacancies/<int:pk>/delete', company_vacancy_delete, name='company_vacancy_delete'),
+    path('delete/', company_delete, name='company_delete')
 ]
 vacancies = [
         path('', VacansiesView.as_view(), name='all_vacancies'),

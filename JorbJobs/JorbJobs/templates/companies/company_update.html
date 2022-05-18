@@ -13,7 +13,7 @@
           <h1 class="h4 pt-2 pb-2">Моя компания</h1>
           <div class="nav flex-column nav-pills">
             <a class="nav-link active" href="#">1. Информация о&nbsp;компании</a>
-            <a class="nav-link" href="#">2. Вакансии</a>
+            <a class="nav-link" href="{% url 'company_vacancies' %}">2. Вакансии</a>
           </div>
         </aside>
       </div>
@@ -23,7 +23,11 @@
             <!-- Tab -->
             <section class="tab-pane fade show active">
               <h2 class="h4 pt-2 pb-3">Информация о&nbsp;компании</h2>
-
+              {% if info %}
+              <p class="alert alert-success" role="alert">
+                {{ info }}
+              </p>
+              {% endif %}
               <form action="{% url 'my_company' %}" method="post" enctype="multipart/form-data" novalidate>
                 {% csrf_token %}
                 <div class="row">
@@ -72,6 +76,9 @@
                 </div>
                 <div class="form-group">
                   <input type="submit" class="btn btn-info" value="Сохранить">
+                </div>
+                <div class=" col-md-4 col-lg-3 d-flex align-items-end">
+                  <a href="{% url 'company_delete' %}" class="btn align-items-start btn-outline-info">Удалить компанию</a>
                 </div>
               </form>
             </section>

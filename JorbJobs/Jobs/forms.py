@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.core.exceptions import ValidationError
 
-from .models import User, Company
+from .models import User, Company, Vacansy, Specialty
 from django import forms
 
 
@@ -69,3 +69,16 @@ class CompanyCreateForm(forms.ModelForm):
             raise ValidationError('Введите описание компании')
         return description
 
+
+class VacancyCreateForm(forms.ModelForm):
+    specialty = forms.ModelChoiceField(queryset=Specialty.objects.all(), empty_label='Специальность не выбрана')
+
+    class Meta:
+        model = Vacansy
+        fields = ('title', 'specialty', 'skills', 'description', 'salary_min', 'salary_max')
+
+    def clean(self):
+        salary_min = self.cleaned_data['salary_min']
+        salary_max = self.cleaned_data['salary_max']
+        if salary_min > salary_max:
+            raise ValidationError('Минимальная зарплата не может быть больше максимальной')

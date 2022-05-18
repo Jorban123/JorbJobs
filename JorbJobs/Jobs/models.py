@@ -1,10 +1,14 @@
+import os
+
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.db.models.signals import post_delete
+from django.dispatch import receiver
 from django.urls import reverse
 from PIL import Image
 
+from JorbJobs.settings import MEDIA_COMPANY_IMAGE_DIR, MEDIA_SPECIALITY_IMAGE_DIR, DEFAULT_IMAGE_NAME
 
-from JorbJobs.settings import MEDIA_COMPANY_IMAGE_DIR, MEDIA_SPECIALITY_IMAGE_DIR
 
 
 class User(AbstractUser):
@@ -23,11 +27,10 @@ class Company(models.Model):
         super(Company, self).save(*args, **kwargs)
         img = Image.open(self.logo.path)
         img = img.resize((500, 500))
+        img.save(self.logo.path)
         employee = self.employee_count
         if int(employee) < 1:
             raise ValueError('Количество сотрудников не может быть меньше одного')
-        img.save(self.logo.path)
-
 
     def __str__(self):
         return f'{self.name}'
@@ -36,6 +39,16 @@ class Company(models.Model):
         return reverse('company_detail', kwargs={'pk': self.pk})
 
 
+@receiver(post_delete, sender=Company)
+def delete_profile(sender, instance, *args, **kwargs):
+    if instance.logo.path:
+        dir_name = os.path.dirname(instance.logo.path)
+        file_name = os.path.basename(instance.logo.path)
+        file_path = rf"{dir_name}\{file_name}"
+        if file_name != DEFAULT_IMAGE_NAME:
+            if os.path.exists(file_path):
+                os.remove(file_path)
+    print("Логотип удален")
 
 
 class Specialty(models.Model):
@@ -96,6 +109,7 @@ class Resume(models.Model):
         products = 'Продукты'
         management = 'Менеджмент'
         testing = 'Тестирование'
+
     specialty = models.CharField(max_length=64,
                                  choices=SpecialtyChoices.choices,
                                  default=SpecialtyChoices.frontend)

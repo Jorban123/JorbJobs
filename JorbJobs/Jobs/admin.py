@@ -11,7 +11,8 @@ class ApplicationAmin(admin.ModelAdmin):
 
 
 class CompanyAdmin(admin.ModelAdmin):
-    pass
+    list_display = ('id','name', 'location','employee_count', 'owner')
+    readonly_fields = ('id',)
 
 
 class SpecialtyAdmin(admin.ModelAdmin):

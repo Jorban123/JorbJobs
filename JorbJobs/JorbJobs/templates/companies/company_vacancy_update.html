@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+{% block backgcolor %}
+  <style>
+    body {
+      background-color: #F6F2E6;
+    }
+  </style>
+{% endblock %}
+{% block content %}
+    <div class="row mt-5">
+      <div class="col-12 col-lg-4">
+        <aside class="pt-3 pb-4 px-4 mb-5 card">
+          <h1 class="h4 pt-2 pb-2">Моя компания</h1>
+          <div class="nav flex-column nav-pills">
+            <a class="nav-link" href="{% url 'my_company' %}">1. Информация о&nbsp;компании</a>
+            <a class="nav-link active" href="{% url 'company_vacancies' %}">2. Вакансии</a>
+          </div>
+        </aside>
+      </div>
+      <div class="col-12 col-lg-8">
+        <div class="card">
+          <div class="card-body px-4 pb-4">
+            <!-- Tab -->
+            <section class="tab-pane fade show active">
+              <h2 class="h4 pt-2 pb-3">Создать вакансию</h2>
+              {% if form.errors %}
+                {% for field, errors in form.errors.items %}
+                  {% for error in errors %}
+                <p class="alert alert-danger" role="alert">
+                  {{ error }}
+                </p>
+                  {% endfor %}
+                {% endfor %}
+              {% endif %}
+              {% if info %}
+              <p class="alert alert-success" role="alert">
+                {{ info }}
+              </p>
+              {% endif %}
+              <form action="{% url 'company_vacancy_update' pk %}" method="post">
+                {% csrf_token %}
+                <div class="row">
+                  <div class="col-12 col-md-6">
+                    <div class="form-group pb-2">
+                      <label class="mb-2 text-dark" for="{{ form.title.id_for_label }}">Название вакансии</label>
+                      {{ form.title }}
+                    </div>
+                  </div>
+                  <div class="col-12 col-md-6">
+                    <label class="mb-2 text-dark" for="{{ form.specialty.id_for_label }}">Специальность</label>
+                    {{ form.specialty }}
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-12 col-md-6">
+                    <div class="form-group pb-2">
+                      <label class="mb-2 text-dark" for="{{ form.skills.id_form_label }}">Навыки</label>
+                      {{ form.skills }}
+                    </div>
+                  </div>
+                  <div class="col-12 col-md-6">
+                    <div class="form-group pb-2">
+                      <label class="mb-2 text-dark" for="{{ form.description.id_for_label }}">Описание вакансии</label>
+                      {{ form.description }}
+                    </div>
+                  </div>
+                </div>
+                <div class="form-group pb-2">
+                  <label class="mb-2 text-dark" for="{{form.salary_min.id_for_label}}">Минимальная зарплата</label>
+                  {{ form.salary_min }}
+                </div>
+                <div class="form-group pb-2">
+                  <label class="mb-2 text-dark" for="{{form.salary_min.id_for_label}}">Максимальная зарплата</label>
+                  {{ form.salary_max }}
+                </div>
+                <div class="form-group">
+                  <input type="submit" class="btn btn-info" value="Сохранить">
+                </div>
+                <div class=" col-md-4 col-lg-3 d-flex align-items-end">
+                  <a href="{% url 'company_vacancy_delete' pk %}" class="btn align-items-start btn-outline-info">Удалить вакансию</a>
+                </div>
+              </form>
+            </section>
+            <!-- END Tab -->
+          </div>
+        </div>
+      </div>
+    </div>
+{% endblock %}
