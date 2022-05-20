@@ -1,9 +1,9 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.core.exceptions import ValidationError
+from django.forms import CharField
 
-from .models import User, Company, Vacansy, Specialty
-from django import forms
+from .models import User, Company, Vacansy, Specialty, Resume, Application
 
 
 class RegisterUserForm(UserCreationForm):
@@ -82,3 +82,20 @@ class VacancyCreateForm(forms.ModelForm):
         salary_max = self.cleaned_data['salary_max']
         if salary_min > salary_max:
             raise ValidationError('Минимальная зарплата не может быть больше максимальной')
+
+
+class ResumeCreateForm(forms.ModelForm):
+
+    class Meta:
+        model = Resume
+        fields = ('name', 'surname', 'status', 'salary', 'specialty', 'grade', 'education', 'experience', 'portfolio')
+
+
+class ApplicationForm(forms.ModelForm):
+    written_username = forms.CharField(error_messages={'required': 'Введите Имя'}, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    written_phone = forms.CharField(error_messages={'required': 'Введите номер телефона'}, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    written_cover_letter = forms.CharField(required=False, widget=forms.Textarea(attrs={'class': 'form-control'}))
+
+    class Meta:
+        model = Application
+        fields = ('written_username', 'written_phone', 'written_cover_letter')

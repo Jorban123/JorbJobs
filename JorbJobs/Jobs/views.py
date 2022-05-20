@@ -1,8 +1,9 @@
 from django.db.models import Count
 from django.http import HttpResponseNotFound
 from django.http import HttpResponseServerError
-from django.views.generic import ListView, DetailView
+from django.views.generic import ListView, DetailView, CreateView
 
+from .forms import ApplicationForm
 from .models import Vacansy, Specialty, Company
 
 
@@ -61,8 +62,9 @@ class CompanyDetail(ListView):
         return context
 
 
-class VacancyDetail(DetailView):
+class VacancyDetail(DetailView, CreateView):
     """Генерирует детальную информацию по конкретной вакансии"""
+    form_class = ApplicationForm
     model = Vacansy
     template_name = 'vacancy.html'
     context_object_name = 'vacansy'

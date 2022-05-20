@@ -34,6 +34,7 @@
                   <p class="mb-2">{{ vacancy.specialty.title }} {% for skill in vacancy.skills|get_skills %} • {{skill}} {% endfor %}</p>
                   <p>От {{ vacancy.salary_min|num_space }} до {{ vacancy.salary_max|num_space }} руб.</p>
                   <p class="text-muted pt-1">{{ vacancy.published_at }}</p>
+                  <a href="#" style="color:red" class="text pt-1">Количество откликов: {{ vacancy.apps }}</a>
                 </div>
                 <div class="col-12 col-md-4 col-lg-3 d-flex align-items-end">
                   <a href="{% url 'company_vacancy_update' vacancy.id %}" class="btn d-flex btn-outline-info">Изменить вакансию</a>

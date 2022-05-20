@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+{% block backgcolor %}
+  <style>
+    body {
+      background-color: #F6F2E6;
+    }
+  </style>
+{% endblock %}
+{% block content %}
+
+      <div class="col-12 col-lg-8 form-row text-center ">
+        <div class="card">
+          <div class="card-body px-4 pb-4">
+            <!-- Tab -->
+            <section class="tab-pane fade show active center-block">
+              <h2 class="h4 pt-2 pb-3">Мое резюме</h2>
+              {% if info %}
+              <p class="alert alert-success" role="alert">
+                {{ info }}
+              </p>
+              {% endif %}
+              <form action="{% url 'resume_update' %}" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="row">
+                  <div class="col-12 col-md-6">
+                    <div class="form-group pb-2">
+                      <label class="mb-2 text-dark" for="{{ form.name.id_for_label }}">Имя</label>
+                      {{ form.name }}
+                    </div>
+                  </div>
+                  <div class="col-12 col-md-6">
+                    <div class="form-group">
+                      <label class="mb-2 text-dark" for="{{form.surname.id_for_label}}">Фамилия</label>
+                        {{ form.surname }}
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-12 col-md-6">
+                    <div class="form-group pb-2">
+                      <label class="mb-2 text-dark" for="{{ form.status.id_form_label }}">Рабочий статус</label>
+                      {{ form.status }}
+                    </div>
+                  </div>
+                  <div class="col-12 col-md-6">
+                    <div class="form-group pb-2">
+                      <label class="mb-2 text-dark" for="{{ form.salary.id_for_label }}">Ожидаемая зарплата</label>
+                      {{ form.salary }}
+                    </div>
+                  </div>
+                  <div class="col-12 col-md-6">
+                    <div class="form-group pb-2">
+                      <label class="mb-2 text-dark" for="{{ form.specialty.id_for_label }}">Специальность</label>
+                      {{ form.specialty }}
+                    </div>
+                  </div>
+                  <div class="col-12 col-md-6">
+                    <div class="form-group pb-2">
+                      <label class="mb-2 text-dark" for="{{ form.grade.id_for_label }}">Уровень знаний</label>
+                      {{ form.grade }}
+                    </div>
+                  </div>
+                  <div class="col-12 col-md-6">
+                    <div class="form-group pb-2">
+                      <label class="mb-2 text-dark" for="{{ form.education.id_for_label }}">Образование</label>
+                      {{ form.education }}
+                    </div>
+                  </div>
+                  <div class="col-12 col-md-6">
+                    <div class="form-group pb-2">
+                      <label class="mb-2 text-dark" for="{{ form.experience.id_for_label }}">Опыт работы</label>
+                      {{ form.experience }}
+                    </div>
+                  </div>
+                  <div class="col-12 col-md-6">
+                    <div class="form-group pb-2">
+                      <label class="mb-2 text-dark" for="{{ form.portfolio.id_for_label }}">Ссылка на портфолио</label>
+                      {{ form.portfolio }}
+                    </div>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <input type="submit" class="btn btn-info" value="Сохранить">
+                </div>
+                <div class=" col-md-4 col-lg-3 d-flex align-items-end">
+                  <a href="{% url 'resume_delete' %}" class="btn align-items-start btn-outline-danger">Удалить Резюме</a>
+                </div>
+              </form>
+            </section>
+            <!-- END Tab -->
+          </div>
+        </div>
+      </div>
+{% endblock %}

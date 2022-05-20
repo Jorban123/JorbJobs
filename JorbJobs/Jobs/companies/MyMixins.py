@@ -4,7 +4,6 @@ from Jobs.models import Company
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
 
-from Jobs.forms import CompanyCreateForm
 
 
 class PresenceCompany(AccessMixin):

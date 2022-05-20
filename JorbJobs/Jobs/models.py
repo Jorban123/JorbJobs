@@ -122,7 +122,8 @@ class Resume(models.Model):
         lead = 'lead'
 
     grade = models.CharField(max_length=100,
-                             choices=GradeChoices.choices)
+                             choices=GradeChoices.choices,
+                             default=GradeChoices.intern)
 
     class EducationChoices(models.TextChoices):
         missing = 'Отсутствует'

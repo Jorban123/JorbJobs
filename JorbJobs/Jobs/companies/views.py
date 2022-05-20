@@ -4,13 +4,14 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from Jobs.forms import CompanyCreateForm, VacancyCreateForm
 from Jobs.models import Company, Vacansy, Specialty
+from django.db.models import Count
 from django.http import Http404
 
 from django.shortcuts import redirect, render
 from django.urls import reverse, reverse_lazy
 from django.views.generic import TemplateView, CreateView, ListView
 
-from Jobs.companies.MyMixins import PresenceCompany, check_company
+from Jobs.companies.MyMixins import PresenceCompany
 
 from JorbJobs.settings import DEFAULT_IMAGE_NAME, DEFAULT_IMAGE_DIR
 
@@ -22,18 +23,17 @@ class CompanyLetsStart(LoginRequiredMixin, PresenceCompany, TemplateView):
 
 
 @login_required(login_url=reverse_lazy('login'))
-# @check_company
 def my_company(request):
     """Отображает компанию пользователя. Если компании нет,
-     то предлагается создать ее(описано в декораторе check_company)"""
+     то предлагается создать ее"""
     if request.method == 'GET':
-        my_company = Company.objects.filter(owner=request.user).first()
-        if my_company:
+        company = Company.objects.filter(owner=request.user).first()
+        if company:
             data = {
-                'name': my_company.name,
-                'location': my_company.location,
-                'description': my_company.description,
-                'employee_count': my_company.employee_count
+                'name': company.name,
+                'location': company.location,
+                'description': company.description,
+                'employee_count': company.employee_count
             }
             form = CompanyCreateForm(initial=data)
             return render(request, 'companies/company_update.html', context={'form': form})
@@ -96,15 +96,31 @@ class CompanyCreate(LoginRequiredMixin, PresenceCompany, CreateView):
             return render(request, 'companies/company_create.html', context={'form': form})
 
 
+@login_required(login_url=reverse_lazy('login'))
+def company_delete(request):
+    """Позволяет удалить компанию"""
+    if request.method == 'GET':
+        company = Company.objects.filter(owner=request.user)
+        if company:
+            company.delete()
+            return redirect(reverse_lazy('company_start'))
+        raise Http404
+
+
 class CompanyVacancies(ListView):
+    """отображает вакансии своей компании во вкладке mycompany"""
     template_name = 'companies/company_vacancies.html'
 
     def get(self, request, *args, **kwargs):
-        vacancies = Vacansy.objects.filter(company=request.user.company).select_related('specialty')
+        vacancies = Vacansy.objects\
+                                    .filter(company=request.user.company)\
+                                    .select_related('specialty')\
+                                    .annotate(apps=Count('applications'))
         return render(request, 'companies/company_vacancies.html', context={'vacancies': vacancies})
 
 
 class CompanyVacancyCreate(CreateView):
+    """Позволяет создать вакансию"""
     template_name = 'companies/company_vacancy_create.html'
     form_class = VacancyCreateForm
 
@@ -132,6 +148,7 @@ class CompanyVacancyCreate(CreateView):
 
 @login_required(login_url=reverse_lazy('login'))
 def company_vacancy_update(request, pk):
+    """Позволяет отредактировать инормацию о вакансии"""
     vacancy = Vacansy.objects.select_related('specialty').filter(id=pk, company__owner=request.user).first()
     if vacancy:
         if request.method == 'GET':
@@ -170,6 +187,7 @@ def company_vacancy_update(request, pk):
 
 @login_required(login_url=reverse_lazy('login'))
 def company_vacancy_delete(request, pk):
+    """Позволяет удалить вакансию"""
     vacancy = Vacansy.objects.select_related('specialty').filter(id=pk, company__owner=request.user).first()
     if vacancy:
         vacancy.delete()
@@ -178,10 +196,4 @@ def company_vacancy_delete(request, pk):
     return redirect(reverse('company_vacancies'))
 
 
-def company_delete(request):
-    if request.method == 'GET':
-        company = Company.objects.filter(owner=request.user)
-        if company:
-            company.delete()
-            return redirect(reverse_lazy('company_start'))
-        raise Http404
+

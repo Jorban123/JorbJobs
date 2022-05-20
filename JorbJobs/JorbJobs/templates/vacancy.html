@@ -19,22 +19,39 @@
           <div style="line-height: 1.8;">
             {{ vacansy.description|safe }}
           </div>
-          <form action="/echo" class="card mt-4 mb-3" enctype="multipart/form-data">
+          <form action="{% url 'application_add' vacansy.id %}" method="post" class="card mt-4 mb-3" enctype="multipart/form-data">
+            {% csrf_token %}
             <div class="card-body mx-3">
               <p class="h5 mt-3 font-weight-normal">Отозваться на вакансию</p>
+              {% if messages %}
+                  {% for message in messages %}
+                    <p class="alert alert-success" role="alert">
+                        {{ message }}
+                    </p>
+                  {% endfor %}
+              {% endif %}
+              {% if form.errors %}
+                {% for field, errors in form.errors.items %}
+                  {% for error in errors %}
+                    <p class="alert alert-danger" role="alert">
+                      {{ error }}
+                    </p>
+                  {% endfor %}
+                {% endfor %}
+              {% endif %}
               <div class="form-group">
-                <label class="mb-1 mt-2" for="userName">Вас зовут</label>
-                <input class="form-control" type="text" placeholder="" id="userName">
+                <label class="mb-1 mt-2" for="{{ form.written_username.id_for_label }}">Вас зовут</label>
+                {{ form.written_username }}
               </div>
               <div class="form-group">
-                <label class="mb-1" for="userPhone">Ваш телефон</label>
-                <input class="form-control" type="tel" placeholder="" id="userPhone">
+                <label class="mb-1" for="{{form.written_phone.id_for_label}}">Ваш телефон</label>
+                {{ form.written_phone }}
               </div>
               <div class="form-group">
-                <label class="mb-1" for="userMsg" >Сопроводительное письмо</label>
-                <textarea class="form-control" rows="8" id="userMsg"></textarea>
+                <label class="mb-1" for="{{ form.written_cover_letter.id_for_label }}" >Сопроводительное письмо</label>
+                {{ form.written_cover_letter }}
               </div>
-              <input type="submit" class="btn btn-primary mt-4 mb-2" value="Записаться на пробный урок">
+              <input type="submit" class="btn btn-primary mt-4 mb-2" value="Откликнуться">
             </div>
           </form>
         </section>

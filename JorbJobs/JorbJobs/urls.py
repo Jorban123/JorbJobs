@@ -11,6 +11,10 @@ from Jobs.accounts.views import LoginUserView, RegisterUserView
 from Jobs.companies.views import CompanyLetsStart, CompanyCreate, CompanyVacancies, my_company, CompanyVacancyCreate,\
     company_vacancy_update, company_vacancy_delete, company_delete
 
+from Jobs.resume.views import MyResumeView, MyResumeCreateView, resume_update, MyResumeLestStartView, resume_delete
+
+from Jobs.application.views import application_add
+
 company_handling = [
     path('', my_company, name='my_company'),
     path('create/', CompanyCreate.as_view(), name='company_create'),
@@ -26,7 +30,13 @@ vacancies = [
         path('<int:id_vacancy>', VacancyDetail.as_view(), name='vacancies_detail'),
         path('cat/<str:cat_name>', SpecialtyView.as_view(), name='vacancies_cat')
 ]
-
+my_resume = [
+    path('', MyResumeView.as_view(), name='my_resume'),
+    path('/lets_start', MyResumeLestStartView.as_view(), name='resume_lets_start'),
+    path('/create_view', MyResumeCreateView.as_view(), name='resume_create'),
+    path('/update/', resume_update, name='resume_update'),
+    path('/delete', resume_delete, name='resume_delete')
+]
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', IndexView.as_view(), name='home'),
@@ -37,6 +47,8 @@ urlpatterns = [
     path('vacancies/', include(vacancies)),
     path('companies/<int:pk>', CompanyDetail.as_view(), name='company_detail'),
     path('__debug__/', include('debug_toolbar.urls')),
+    path('my_resume', include(my_resume)),
+    path('application_add/<int:pk>', application_add, name='application_add')
 ]
 
 handler404 = custom_handler404
