@@ -25,6 +25,11 @@
                 <div class="col-12 col-md-4 col-lg-3 d-flex align-items-end">
                   <img src="{{ vacansy.company.logo.url }}" width="130" height="80" alt="">
                 </div>
+                {% if vacansy in applications %}
+                <div class="col-12 col-md-4 col-lg-3 d-flex align-items-end">
+                  <p style="color: red" class=" d-flex">Вы откликнулись</p>
+                </div>
+                {% endif %}
               </div>
             </div>
           </div>

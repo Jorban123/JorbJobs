@@ -4,6 +4,20 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect, Http404
 from django.urls import reverse_lazy
+from django.views.generic import ListView
+
+
+class MyApplications(ListView):
+    template_name = 'applications/my_applications.html'
+    queryset = ''
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super(MyApplications, self).get_context_data()
+        context['applications'] = Vacansy.objects.select_related('company') \
+            .select_related('specialty') \
+            .filter(applications__user=self.request.user)
+        context['amount'] = len(context['applications'])
+        return context
 
 
 @login_required(login_url=reverse_lazy('login'))

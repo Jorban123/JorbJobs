@@ -2,15 +2,17 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import Http404
 from django.shortcuts import render, redirect
-from django.urls import reverse_lazy, reverse
+from django.urls import reverse_lazy
 from django.views.generic import TemplateView, CreateView, UpdateView
 
 from Jobs.forms import ResumeCreateForm
 
 from Jobs.models import Resume
 
+from Jobs.companies.MyMixins import PresenceCompany
 
-class MyResumeLestStartView(LoginRequiredMixin, TemplateView):
+
+class MyResumeLestStartView(LoginRequiredMixin, PresenceCompany, TemplateView):
     """Отрисовка шаблона resume_lets_start"""
     template_name = 'resume/resume_start.html'
 
@@ -83,8 +85,7 @@ def resume_update(request):
             resume_education = request.POST.get('education')
             resume_experience = request.POST.get('experience')
             resume_portfolio = request.POST.get('portfolio')
-            Resume.objects.update(user=request.user,
-                                  name=resume_name,
+            Resume.objects.update(name=resume_name,
                                   surname=resume_surname,
                                   status=resume_status,
                                   salary=resume_salary,

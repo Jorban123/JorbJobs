@@ -3,7 +3,7 @@ import os
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from Jobs.forms import CompanyCreateForm, VacancyCreateForm
-from Jobs.models import Company, Vacansy, Specialty
+from Jobs.models import Company, Vacansy, Specialty, Application
 from django.db.models import Count
 from django.http import Http404
 
@@ -14,6 +14,7 @@ from django.views.generic import TemplateView, CreateView, ListView
 from Jobs.companies.MyMixins import PresenceCompany
 
 from JorbJobs.settings import DEFAULT_IMAGE_NAME, DEFAULT_IMAGE_DIR
+
 
 
 class CompanyLetsStart(LoginRequiredMixin, PresenceCompany, TemplateView):
@@ -108,7 +109,7 @@ def company_delete(request):
 
 
 class CompanyVacancies(ListView):
-    """отображает вакансии своей компании во вкладке mycompany"""
+    """Отображает вакансии своей компании во вкладке mycompany"""
     template_name = 'companies/company_vacancies.html'
 
     def get(self, request, *args, **kwargs):
@@ -196,4 +197,12 @@ def company_vacancy_delete(request, pk):
     return redirect(reverse('company_vacancies'))
 
 
-
+class VacansyApplications(ListView):
+    """Просмотр откликов на вакансию"""
+    template_name = 'companies/company_applications.html'
+    queryset = ''
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super(VacansyApplications, self).get_context_data()
+        context['applications'] = Application.objects.filter(vacancy=self.kwargs['pk']).select_related('vacancy')
+        context['vacancy'] = context['applications'].first().vacancy
+        return context

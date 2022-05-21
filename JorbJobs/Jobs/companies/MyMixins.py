@@ -11,7 +11,7 @@ class PresenceCompany(AccessMixin):
     def dispatch(self, request, *args, **kwargs):
         my_company = Company.objects.filter(owner=request.user).first()
         if my_company:
-            return redirect(reverse_lazy('my_company'))
+            return redirect('my_company')
         return super().dispatch(request, *args, **kwargs)
 
 

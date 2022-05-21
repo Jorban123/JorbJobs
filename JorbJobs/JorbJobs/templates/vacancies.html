@@ -19,6 +19,11 @@
                 <div class="col-12 col-md-4 col-lg-3 d-flex align-items-end">
                   <a href="{{ vacansy.company.get_absolute_url }}"><img src="{{ vacansy.company.logo.url }}" width="130" height="80" alt=""></a>
                 </div>
+                {% if vacansy in applications %}
+                <div class="col-12 col-md-4 col-lg-3 d-flex align-items-end">
+                  <p style="color: red" class=" d-flex">Вы откликнулись</p>
+                </div>
+                {% endif %}
               </div>
             </div>
           </div>

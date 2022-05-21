@@ -9,11 +9,12 @@ from Jobs.views import custom_handler404, custom_handler500
 from Jobs.accounts.views import LoginUserView, RegisterUserView
 
 from Jobs.companies.views import CompanyLetsStart, CompanyCreate, CompanyVacancies, my_company, CompanyVacancyCreate,\
-    company_vacancy_update, company_vacancy_delete, company_delete
+    company_vacancy_update, company_vacancy_delete, company_delete, VacansyApplications
 
 from Jobs.resume.views import MyResumeView, MyResumeCreateView, resume_update, MyResumeLestStartView, resume_delete
 
-from Jobs.application.views import application_add
+from Jobs.application.views import application_add, MyApplications
+
 
 company_handling = [
     path('', my_company, name='my_company'),
@@ -23,6 +24,7 @@ company_handling = [
     path('vacancies/create/', CompanyVacancyCreate.as_view(), name='company_vacancy_create'),
     path('vacancies/<int:pk>/update', company_vacancy_update, name='company_vacancy_update'),
     path('vacancies/<int:pk>/delete', company_vacancy_delete, name='company_vacancy_delete'),
+    path('vacancies/<int:pk>/applications', VacansyApplications.as_view(), name='company_applications'),
     path('delete/', company_delete, name='company_delete')
 ]
 vacancies = [
@@ -35,7 +37,10 @@ my_resume = [
     path('/lets_start', MyResumeLestStartView.as_view(), name='resume_lets_start'),
     path('/create_view', MyResumeCreateView.as_view(), name='resume_create'),
     path('/update/', resume_update, name='resume_update'),
-    path('/delete', resume_delete, name='resume_delete')
+    path('/delete', resume_delete, name='resume_delete'),
+]
+applications = [
+    path('', MyApplications.as_view(), name='my_applications')
 ]
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -48,6 +53,7 @@ urlpatterns = [
     path('companies/<int:pk>', CompanyDetail.as_view(), name='company_detail'),
     path('__debug__/', include('debug_toolbar.urls')),
     path('my_resume', include(my_resume)),
+    path('my_applications', include(applications)),
     path('application_add/<int:pk>', application_add, name='application_add')
 ]
 

@@ -32,6 +32,7 @@ class VacansiesView(ListView):
         context = super(VacansiesView, self).get_context_data()
         context['title'] = 'Все вакансии'
         context['amount'] = Vacansy.objects.aggregate(amount=Count('id'))['amount']
+        context['applications'] = Vacansy.objects.filter(applications__user=self.request.user)
         return context
 
     def get_queryset(self):
@@ -59,6 +60,7 @@ class CompanyDetail(ListView):
         context['location'] = company.location
         context['logo'] = company.logo.url
         context['amount'] = Vacansy.objects.filter(company__pk=self.kwargs['pk']).aggregate(amount=Count('id'))['amount']
+        context['applications'] = Vacansy.objects.filter(applications__user=self.request.user)
         return context
 
 
@@ -73,6 +75,10 @@ class VacancyDetail(DetailView, CreateView):
     def get_queryset(self):
         return Vacansy.objects.select_related('specialty')\
                               .select_related('company')
+    def get_context_data(self, **kwargs):
+        context = super(VacancyDetail, self).get_context_data()
+        context['applications'] = Vacansy.objects.filter(applications__user=self.request.user)
+        return context
 
 
 class SpecialtyView(ListView):
@@ -93,6 +99,7 @@ class SpecialtyView(ListView):
         context['amount'] = Vacansy.objects.select_related('specialty')\
                                            .filter(specialty__code=self.kwargs['cat_name'])\
                                            .aggregate(amount=Count('id'))['amount']
+        context['applications'] = Vacansy.objects.filter(applications__user=self.request.user)
         return context
 
 
