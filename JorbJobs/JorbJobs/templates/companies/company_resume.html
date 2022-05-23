@@ -23,23 +23,27 @@
           <div class="card-body px-4 pb-4">
             <!-- Tab -->
             <section class="tab-pane fade show active">
-              <h2 class="h4 pt-2 pb-3">Отклики на вакансию: <a href="{% url 'vacancies_detail' vacancy.id %}" style="color: black">{{ vacancy.title }}</a></h2>
-              {% for application in applications %}
+              <h2 class="h4 pt-2 pb-3">Резюме кандидата</h2>
           <div class="card mb-4">
             <div class="card-body px-4">
               <div class="row">
                 <div class="col-12 col-md-8 col-lg-9">
-                  <h2 class="h2 pb-2">Имя: {{ application.written_username }}</h2>
-                  <p class="mb-2">Номер телефона: {{ application.written_phone }}</p>
-                  <p>Сопроводительное письмо: {{ application.written_cover_letter }}</p>
+                  <p class="pb-2">Имя: {{ user.resume.name }}</p>
+                  <p class="mb-2">Фамилия: {{ user.resume.surname }}</p>
+                  <p>Статус: {{ user.resume.status }}</p>
+                  <p class="pt-1">Зарплата: {{ user.resume.salary }}</p>
+                  <p class="pt-1">Специальность: {{ user.resume.specialty }}</p>
+                  <p class="pt-1">Уровень знаний: {{ user.resume.grade }}</p>
+                  <p class="pt-1">Образование: {{ user.resume.education }}</p>
+                  <p class="pt-1">Опыт работы: {{ user.resume.experience }}</p>
+                  <p class="pt-1">Ссылка на портфолио: {{ user.resume.portfolio }}</p>
                 </div>
-                <div class=" col-md-4 col-lg-3 d-flex align-items-end">
-                  <a href="{% url 'company_resume' application.vacancy.id application.user.id %}" class="btn align-items-start btn-outline-info">Просмотр резюме</a>
+                <div class="col-12 col-md-4 col-lg-3 d-flex align-items-end">
                 </div>
+                </div>
+              <a href="{{ request.META.HTTP_REFERER }}" class="btn btn-info" >Назад</a>
               </div>
             </div>
-          </div>
-                {% endfor %}
             </section>
             <!-- END Tab -->
           </div>

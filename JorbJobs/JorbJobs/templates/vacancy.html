@@ -28,13 +28,6 @@
             {% csrf_token %}
             <div class="card-body mx-3">
               <p class="h5 mt-3 font-weight-normal">Отозваться на вакансию</p>
-              {% if messages %}
-                  {% for message in messages %}
-                    <p class="alert alert-success" role="alert">
-                        {{ message }}
-                    </p>
-                  {% endfor %}
-              {% endif %}
               {% if form.errors %}
                 {% for field, errors in form.errors.items %}
                   {% for error in errors %}

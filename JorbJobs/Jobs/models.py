@@ -28,9 +28,6 @@ class Company(models.Model):
         img = Image.open(self.logo.path)
         img = img.resize((500, 500))
         img.save(self.logo.path)
-        employee = self.employee_count
-        if int(employee) < 1:
-            raise ValueError('Количество сотрудников не может быть меньше одного')
 
     def __str__(self):
         return f'{self.name}'

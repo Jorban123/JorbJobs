@@ -3,17 +3,18 @@ import os
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from Jobs.forms import CompanyCreateForm, VacancyCreateForm
-from Jobs.models import Company, Vacansy, Specialty, Application
+from Jobs.models import Company, Vacansy, Specialty, Application, User
 from django.db.models import Count
 from django.http import Http404
 
 from django.shortcuts import redirect, render
 from django.urls import reverse, reverse_lazy
-from django.views.generic import TemplateView, CreateView, ListView
+from django.views.generic import TemplateView, CreateView, ListView, DetailView
 
 from Jobs.companies.MyMixins import PresenceCompany
 
 from JorbJobs.settings import DEFAULT_IMAGE_NAME, DEFAULT_IMAGE_DIR
+
 
 
 
@@ -206,3 +207,13 @@ class VacansyApplications(ListView):
         context['applications'] = Application.objects.filter(vacancy=self.kwargs['pk']).select_related('vacancy')
         context['vacancy'] = context['applications'].first().vacancy
         return context
+
+
+class ResumeView(DetailView):
+    template_name = 'companies/company_resume.html'
+    context_object_name = 'user'
+    pk_url_kwarg = 'pk_user'
+
+    def get_queryset(self):
+        return User.objects.filter(id=self.kwargs['pk_user']).select_related('resume')
+
