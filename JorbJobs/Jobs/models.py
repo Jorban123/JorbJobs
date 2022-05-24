@@ -10,7 +10,6 @@ from PIL import Image
 from JorbJobs.settings import MEDIA_COMPANY_IMAGE_DIR, MEDIA_SPECIALITY_IMAGE_DIR, DEFAULT_IMAGE_NAME
 
 
-
 class User(AbstractUser):
     pass
 
@@ -34,6 +33,10 @@ class Company(models.Model):
 
     def get_absolute_url(self):
         return reverse('company_detail', kwargs={'pk': self.pk})
+
+    class Meta:
+        verbose_name = 'Компания'
+        verbose_name_plural = 'Компании'
 
 
 @receiver(post_delete, sender=Company)
@@ -59,6 +62,10 @@ class Specialty(models.Model):
     def get_absolute_url(self):
         return reverse('vacancies_cat', kwargs={'cat_name': self.code})
 
+    class Meta:
+        verbose_name = 'Специальность'
+        verbose_name_plural = 'Специальности'
+
 
 class Vacansy(models.Model):
     title = models.CharField(max_length=64)
@@ -70,8 +77,15 @@ class Vacansy(models.Model):
     salary_max = models.IntegerField()
     published_at = models.DateField(auto_now=False, auto_now_add=True)
 
+    def __str__(self):
+        return f'{self.title}'
+
     def get_absolute_url(self):
         return reverse('vacancies_detail', kwargs={'id_vacancy': self.pk})
+
+    class Meta:
+        verbose_name = 'Вакансия'
+        verbose_name_plural = 'Вакансии'
 
 
 class Application(models.Model):
@@ -80,10 +94,19 @@ class Application(models.Model):
     written_cover_letter = models.TextField()
     vacancy = models.ForeignKey(Vacansy, on_delete=models.CASCADE, related_name='applications')
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='applications')
+    is_invite = models.BooleanField(null=True)
+    is_reject = models.BooleanField(null=True)
+
+    def __str__(self):
+        return f'{self.user}'
+
+    class Meta:
+        verbose_name = 'Отклик'
+        verbose_name_plural = 'Отклики'
 
 
 class Resume(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='resume')
     name = models.CharField(max_length=64)
     surname = models.CharField(max_length=64)
 
@@ -132,3 +155,10 @@ class Resume(models.Model):
     education = models.CharField(max_length=100, choices=EducationChoices.choices)
     experience = models.CharField(max_length=100)
     portfolio = models.URLField()
+
+    def __str__(self):
+        return f'{self.user}'
+
+    class Meta:
+        verbose_name = 'Резюме'
+        verbose_name_plural = 'Резюме'

@@ -9,16 +9,16 @@ from Jobs.forms import ResumeCreateForm
 
 from Jobs.models import Resume
 
-from Jobs.companies.MyMixins import PresenceCompany
 
 
-class MyResumeLestStartView(LoginRequiredMixin, PresenceCompany, TemplateView):
+class MyResumeLestStartView(LoginRequiredMixin, TemplateView):
     """Отрисовка шаблона resume_lets_start"""
     template_name = 'resume/resume_start.html'
 
 
 class MyResumeView(LoginRequiredMixin, UpdateView):
     """Если резюме найдено, то переход к редактированию. Если нет, то редирект на lest_start"""
+
     def get(self, request, *args, **kwargs):
         resume = Resume.objects.filter(user=request.user).first()
         if resume:
@@ -85,15 +85,16 @@ def resume_update(request):
             resume_education = request.POST.get('education')
             resume_experience = request.POST.get('experience')
             resume_portfolio = request.POST.get('portfolio')
-            Resume.objects.update(name=resume_name,
-                                  surname=resume_surname,
-                                  status=resume_status,
-                                  salary=resume_salary,
-                                  specialty=resume_specialty,
-                                  grade=resume_grade,
-                                  education=resume_education,
-                                  experience=resume_experience,
-                                  portfolio=resume_portfolio)
+            Resume.objects.filter(user=request.user).update(
+                name=resume_name,
+                surname=resume_surname,
+                status=resume_status,
+                salary=resume_salary,
+                specialty=resume_specialty,
+                grade=resume_grade,
+                education=resume_education,
+                experience=resume_experience,
+                portfolio=resume_portfolio)
             info = 'Резюме успешно обновлено'
             return render(request, 'resume/resume_edit.html', context={'form': form,
                                                                        'info': info})
@@ -109,3 +110,4 @@ def resume_delete(request):
             return redirect('resume_lets_start')
         else:
             raise Http404
+

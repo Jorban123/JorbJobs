@@ -3,8 +3,8 @@ import os
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from Jobs.forms import CompanyCreateForm, VacancyCreateForm
-from Jobs.models import Company, Vacansy, Specialty, Application, User
-from django.db.models import Count
+from Jobs.models import Company, Vacansy, Specialty, Application, User, Resume
+from django.db.models import Count, Q
 from django.http import Http404
 
 from django.shortcuts import redirect, render
@@ -14,8 +14,6 @@ from django.views.generic import TemplateView, CreateView, ListView, DetailView
 from Jobs.companies.MyMixins import PresenceCompany
 
 from JorbJobs.settings import DEFAULT_IMAGE_NAME, DEFAULT_IMAGE_DIR
-
-
 
 
 class CompanyLetsStart(LoginRequiredMixin, PresenceCompany, TemplateView):
@@ -114,10 +112,12 @@ class CompanyVacancies(ListView):
     template_name = 'companies/company_vacancies.html'
 
     def get(self, request, *args, **kwargs):
-        vacancies = Vacansy.objects\
-                                    .filter(company=request.user.company)\
-                                    .select_related('specialty')\
-                                    .annotate(apps=Count('applications'))
+        vacancies = Vacansy.objects \
+            .filter(company=request.user.company) \
+            .select_related('specialty') \
+            .annotate(apps=Count('applications', filter=Q(applications__is_invite=None, applications__is_reject=None)))\
+            .annotate(invites=Count('applications', filter=Q(applications__is_invite=True)))\
+            .annotate(rejects=Count('applications', filter=Q(applications__is_reject=True)))
         return render(request, 'companies/company_vacancies.html', context={'vacancies': vacancies})
 
 
@@ -202,18 +202,71 @@ class VacansyApplications(ListView):
     """Просмотр откликов на вакансию"""
     template_name = 'companies/company_applications.html'
     queryset = ''
+
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super(VacansyApplications, self).get_context_data()
-        context['applications'] = Application.objects.filter(vacancy=self.kwargs['pk']).select_related('vacancy')
-        context['vacancy'] = context['applications'].first().vacancy
+        context['applications'] = Application.objects.filter(vacancy=self.kwargs['pk'], is_reject=None, is_invite=None).select_related('vacancy')
+        context['vacancy'] = Vacansy.objects.filter(id=self.kwargs['pk']).first()
+        context['title'] = 'Отклики на вакансию: '
         return context
 
 
-class ResumeView(DetailView):
+class VacansyApplicationsInvite(ListView):
+    """Просмотр откликов на вакансию"""
+    template_name = 'companies/company_applications.html'
+    queryset = ''
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super(VacansyApplicationsInvite, self).get_context_data()
+        context['applications'] = Application.objects.filter(vacancy=self.kwargs['pk'], is_invite=True).select_related('vacancy')
+        context['vacancy'] = Vacansy.objects.filter(id=self.kwargs['pk']).first()
+        context['title'] = 'Положительные отклики на вакансию: '
+        return context
+
+
+class VacansyApplicationsReject(ListView):
+    """Просмотр откликов на вакансию"""
+    template_name = 'companies/company_applications.html'
+    queryset = ''
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super(VacansyApplicationsReject, self).get_context_data()
+        context['applications'] = Application.objects.filter(vacancy=self.kwargs['pk'], is_reject=True).select_related('vacancy')
+        context['vacancy'] = Vacansy.objects.filter(id=self.kwargs['pk']).first()
+        context['title'] = 'Отрицательные отклики на вакансию: '
+        return context
+
+
+class ResumeView(TemplateView):
     template_name = 'companies/company_resume.html'
-    context_object_name = 'user'
-    pk_url_kwarg = 'pk_user'
 
-    def get_queryset(self):
-        return User.objects.filter(id=self.kwargs['pk_user']).select_related('resume')
+    def get_context_data(self, **kwargs):
+        context = super(ResumeView, self).get_context_data()
+        context['userapp'] = Application.objects.filter(user__id=self.kwargs['pk_user'],
+                                                        vacancy__id=self.kwargs['pk_vacancy']) \
+            .select_related('user').first()
+        return context
 
+
+@login_required(login_url=reverse_lazy('login'))
+def application_reject(request, pk):
+    if request.method == 'GET':
+        company = Company.objects.filter(owner=request.user).first()
+        application = Application.objects.filter(id=pk).first()
+        if company == application.vacancy.company:
+            Application.objects.filter(id=pk).update(is_reject=True)
+            return redirect(request.META.get('HTTP_REFERER'))
+        else:
+            return Http404
+
+
+@login_required(login_url=reverse_lazy('login'))
+def application_invite(request, pk):
+    if request.method == 'GET':
+        company = Company.objects.filter(owner=request.user).first()
+        application = Application.objects.filter(id=pk).first()
+        if company == application.vacancy.company:
+            Application.objects.filter(id=pk).update(is_invite=True)
+            return redirect(request.META.get('HTTP_REFERER'))
+        else:
+            return Http404

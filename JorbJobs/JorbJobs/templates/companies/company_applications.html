@@ -23,7 +23,7 @@
           <div class="card-body px-4 pb-4">
             <!-- Tab -->
             <section class="tab-pane fade show active">
-              <h2 class="h4 pt-2 pb-3">Отклики на вакансию: <a href="{% url 'vacancies_detail' vacancy.id %}" style="color: black">{{ vacancy.title }}</a></h2>
+              <h2 class="h4 pt-2 pb-3">{{ title }} <a href="{% url 'vacancies_detail' vacancy.id %}" style="color: black">{{ vacancy.title }}</a></h2>
               {% for application in applications %}
           <div class="card mb-4">
             <div class="card-body px-4">
