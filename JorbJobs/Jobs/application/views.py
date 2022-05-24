@@ -13,9 +13,10 @@ class MyApplications(ListView):
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super(MyApplications, self).get_context_data()
-        context['applications'] = Vacansy.objects.select_related('company') \
-            .select_related('specialty') \
-            .filter(applications__user=self.request.user)
+        # context['applications'] = Vacansy.objects.select_related('company') \
+        #     .select_related('specialty') \
+        #     .filter(applications__user=self.request.user)
+        context['applications'] = Application.objects.filter(user=self.request.user).select_related('vacancy')
         context['amount'] = len(context['applications'])
         return context
 
