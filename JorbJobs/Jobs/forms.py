@@ -99,3 +99,9 @@ class ApplicationForm(forms.ModelForm):
     class Meta:
         model = Application
         fields = ('written_username', 'written_phone', 'written_cover_letter')
+
+    def clean_written_phone(self):
+        written_phone = self.cleaned_data['written_phone']
+        if len(written_phone) > 12:
+            raise ValidationError('Номер телефона не может быть больше 12 символов')
+        return written_phone

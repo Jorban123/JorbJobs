@@ -3,7 +3,8 @@ from Jobs.models import Application, Vacansy
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect, Http404
-from django.urls import reverse_lazy
+from django.shortcuts import render, redirect
+from django.urls import reverse_lazy, reverse
 from django.views.generic import ListView
 
 
@@ -36,5 +37,8 @@ def application_add(request, pk):
                                        user=request.user)
             messages.success(request, 'Отклик успешно отправлен')
             return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
-    else:
-        raise Http404
+        else:
+            return render(request, 'vacancy.html', context={'form': form,
+                                                            'vacansy': Vacansy.objects.get(pk=pk)})
+    elif request.method == 'GET':
+        return redirect('vacancies_detail', id_vacancy=pk)
